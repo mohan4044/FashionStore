@@ -8,15 +8,15 @@
 <%@ page import="com.fashionstore.model.Product" %>
 
 <%
-    Cart cart = (Cart) request.getAttribute("cart");
+Cart cart = (Cart) request.getAttribute("cart");
 
-    @SuppressWarnings("unchecked")
-    List<CartItem> cartItems =
-            (List<CartItem>) request.getAttribute("cartItems");
+@SuppressWarnings("unchecked")
+List<CartItem> cartItems =
+        (List<CartItem>) request.getAttribute("cartItems");
 
-    @SuppressWarnings("unchecked")
-    List<Product> products =
-            (List<Product>) request.getAttribute("products");
+@SuppressWarnings("unchecked")
+List<Product> products =
+        (List<Product>) request.getAttribute("products");
 %>
 
 <!DOCTYPE html>
@@ -24,378 +24,428 @@
 
 <head>
 
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-    <meta name="viewport"
-          content="width=device-width, initial-scale=1.0">
+<meta name="viewport"
+      content="width=device-width, initial-scale=1.0">
 
-    <title>Shopping Cart | Fashion Store</title>
+<title>Shopping Cart | Fashion Store</title>
 
-    <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/assets/css/style.css">
+<link rel="stylesheet"
+      href="${pageContext.request.contextPath}/assets/css/style.css">
 
-    <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/assets/css/cart.css">
+<link rel="stylesheet"
+      href="${pageContext.request.contextPath}/assets/css/cart.css">
 
 </head>
 
 <body>
 
-    <jsp:include page="/WEB-INF/views/partials/navbar.jsp" />
+<jsp:include page="/WEB-INF/views/partials/navbar.jsp" />
 
+<main class="cart-page">
 
-    <main class="cart-page">
+<div class="cart-container">
 
-        <div class="cart-container">
+<div class="cart-header">
 
-            <div class="cart-header">
+<h1>Shopping Cart</h1>
 
-                <h1>Shopping Cart</h1>
+<p>
+Review your selected products.
+</p>
 
-                <p>
-                    Review your selected products.
-                </p>
+</div>
 
-            </div>
 
+<% if (request.getAttribute("error") != null) { %>
 
-            <% if (request.getAttribute("error") != null) { %>
+<div class="cart-error">
 
-                <div class="cart-error">
+<%= request.getAttribute("error") %>
 
-                    <%= request.getAttribute("error") %>
+</div>
 
-                </div>
+<% } %>
 
-            <% } %>
 
+<%
 
-            <%
-                if (cartItems != null && !cartItems.isEmpty()) {
-            %>
+if (cartItems != null && !cartItems.isEmpty()) {
 
-                <div class="cart-layout">
+%>
 
+<div class="cart-layout">
 
-                    <!-- =================================================
-                         CART ITEMS
-                         ================================================= -->
 
-                    <section class="cart-items">
+<!-- =================================================
+     CART ITEMS
+================================================= -->
 
-                        <%
-                            BigDecimal cartTotal = BigDecimal.ZERO;
+<section class="cart-items">
 
-                            for (int i = 0; i < cartItems.size(); i++) {
+<%
 
-                                CartItem item = cartItems.get(i);
+BigDecimal cartTotal = BigDecimal.ZERO;
 
-                                Product product = null;
+for (int i = 0; i < cartItems.size(); i++) {
 
-                                if (products != null &&
-                                    i < products.size()) {
+    CartItem item = cartItems.get(i);
 
-                                    product = products.get(i);
-                                }
+    Product product = null;
 
-                                BigDecimal itemTotal =
-                                        item.getUnitPrice()
-                                            .multiply(
-                                                BigDecimal.valueOf(
-                                                    item.getQuantity()
-                                                )
-                                            );
+    if (products != null && i < products.size()) {
+        product = products.get(i);
+    }
 
-                                cartTotal =
-                                        cartTotal.add(itemTotal);
-                        %>
+    BigDecimal itemTotal =
+            item.getUnitPrice()
+                .multiply(
+                    BigDecimal.valueOf(
+                        item.getQuantity()
+                    )
+                );
 
+    cartTotal = cartTotal.add(itemTotal);
 
-                        <article class="cart-item">
+%>
 
 
-                            <!-- =================================================
-                                 PRODUCT IMAGE
-                                 ================================================= -->
+<article class="cart-item">
 
-                            <div class="cart-item-image">
 
-                                <%
-                                    if (product != null &&
-                                        product.getImageUrl() != null &&
-                                        !product.getImageUrl()
-                                               .trim()
-                                               .isEmpty()) {
-                                %>
+<!-- =================================================
+     PRODUCT IMAGE
+================================================= -->
 
-                                    <img
-                                        src="<%= product.getImageUrl() %>"
-                                        alt="<%= product.getProductName() %>">
+<div class="cart-item-image">
 
-                                <%
-                                    } else {
-                                %>
+<%
 
-                                    <span>
-                                        No Image
-                                    </span>
+if (product != null &&
+    product.getImageUrl() != null &&
+    !product.getImageUrl().trim().isEmpty()) {
 
-                                <%
-                                    }
-                                %>
+%>
 
-                            </div>
+<img
+    src="<%= request.getContextPath() %>/assets/images/<%= product.getImageUrl() %>"
+    alt="<%= product.getProductName() %>">
 
+<%
 
-                            <!-- =================================================
-                                 PRODUCT INFORMATION
-                                 ================================================= -->
+} else {
 
-                            <div class="cart-item-info">
+%>
 
-                                <%
-                                    if (product != null) {
-                                %>
+<span>
+No Image
+</span>
 
-                                    <p class="cart-item-brand">
-                                        <%= product.getBrand() %>
-                                    </p>
+<%
 
-                                    <h2>
-                                        <%= product.getProductName() %>
-                                    </h2>
+}
 
-                                <%
-                                    } else {
-                                %>
+%>
 
-                                    <h2>
-                                        Product #<%= item.getProductId() %>
-                                    </h2>
+</div>
 
-                                <%
-                                    }
-                                %>
 
+<!-- =================================================
+     PRODUCT INFORMATION
+================================================= -->
 
-                                <p>
-                                    Size:
-                                    <strong>
-                                        <%= item.getSizeLabel() %>
-                                    </strong>
-                                </p>
+<div class="cart-item-info">
 
+<%
 
-                                <p class="cart-item-price">
+if (product != null) {
 
-                                    ₹<%= item.getUnitPrice() %>
+%>
 
-                                </p>
+<p class="cart-item-brand">
 
+<%= product.getBrand() %>
 
-                                <!-- =================================================
-                                     QUANTITY
-                                     ================================================= -->
+</p>
 
-                                <div class="cart-item-quantity">
 
-                                    <form
-                                        action="${pageContext.request.contextPath}/cart-item"
-                                        method="post">
+<h2>
 
-                                        <input
-                                            type="hidden"
-                                            name="action"
-                                            value="update">
+<%= product.getProductName() %>
 
-                                        <input
-                                            type="hidden"
-                                            name="cartItemId"
-                                            value="<%= item.getCartItemId() %>">
+</h2>
 
-                                        <label for="quantity-<%= item.getCartItemId() %>">
-                                            Quantity
-                                        </label>
+<%
 
-                                        <input
-                                            type="number"
-                                            id="quantity-<%= item.getCartItemId() %>"
-                                            name="quantity"
-                                            value="<%= item.getQuantity() %>"
-                                            min="1">
+} else {
 
-                                        <button type="submit">
-                                            Update
-                                        </button>
+%>
 
-                                    </form>
+<h2>
 
-                                </div>
+Product #<%= item.getProductId() %>
 
+</h2>
 
-                                <!-- =================================================
-                                     REMOVE
-                                     ================================================= -->
+<%
 
-                                <form
-                                    action="${pageContext.request.contextPath}/cart-item"
-                                    method="post">
+}
 
-                                    <input
-                                        type="hidden"
-                                        name="action"
-                                        value="remove">
+%>
 
-                                    <input
-                                        type="hidden"
-                                        name="cartItemId"
-                                        value="<%= item.getCartItemId() %>">
 
-                                    <button
-                                        type="submit"
-                                        class="remove-item">
+<p>
 
-                                        Remove
+Size:
 
-                                    </button>
+<strong>
 
-                                </form>
+<%= item.getSizeLabel() %>
 
-                            </div>
+</strong>
 
+</p>
 
-                            <!-- =================================================
-                                 ITEM TOTAL
-                                 ================================================= -->
 
-                            <div class="cart-item-total">
+<p class="cart-item-price">
 
-                                ₹<%= itemTotal %>
+₹<%= item.getUnitPrice() %>
 
-                            </div>
+</p>
 
-                        </article>
 
+<!-- =================================================
+     QUANTITY
+================================================= -->
 
-                        <%
-                            }
-                        %>
+<div class="cart-item-quantity">
 
-                    </section>
+<form
+    action="${pageContext.request.contextPath}/cart-item"
+    method="post">
 
+<input
+    type="hidden"
+    name="action"
+    value="update">
 
-                    <!-- =================================================
-                         CART SUMMARY
-                         ================================================= -->
+<input
+    type="hidden"
+    name="cartItemId"
+    value="<%= item.getCartItemId() %>">
 
-                    <aside class="cart-summary">
+<label for="quantity-<%= item.getCartItemId() %>">
 
-                        <h2>
-                            Order Summary
-                        </h2>
+Quantity
 
+</label>
 
-                        <div class="summary-row">
+<input
+    type="number"
+    id="quantity-<%= item.getCartItemId() %>"
+    name="quantity"
+    value="<%= item.getQuantity() %>"
+    min="1">
 
-                            <span>
-                                Subtotal
-                            </span>
+<button type="submit">
 
-                            <strong>
-                                ₹<%= cartTotal %>
-                            </strong>
+Update
 
-                        </div>
+</button>
 
+</form>
 
-                        <div class="summary-row">
+</div>
 
-                            <span>
-                                Delivery
-                            </span>
 
-                            <span>
-                                Calculated at checkout
-                            </span>
+<!-- =================================================
+     REMOVE
+================================================= -->
 
-                        </div>
+<form
+    action="${pageContext.request.contextPath}/cart-item"
+    method="post">
 
+<input
+    type="hidden"
+    name="action"
+    value="remove">
 
-                        <div class="summary-total">
+<input
+    type="hidden"
+    name="cartItemId"
+    value="<%= item.getCartItemId() %>">
 
-                            <span>
-                                Total
-                            </span>
+<button
+    type="submit"
+    class="remove-item">
 
-                            <strong>
-                                ₹<%= cartTotal %>
-                            </strong>
+Remove
 
-                        </div>
+</button>
 
+</form>
 
-                        <a
-                            href="${pageContext.request.contextPath}/checkout"
-                            class="checkout-button">
+</div>
 
-                            Proceed to Checkout
 
-                        </a>
+<!-- =================================================
+     ITEM TOTAL
+================================================= -->
 
+<div class="cart-item-total">
 
-                        <a
-                            href="${pageContext.request.contextPath}/products"
-                            class="continue-shopping">
+₹<%= itemTotal %>
 
-                            ← Continue Shopping
+</div>
 
-                        </a>
+</article>
 
-                    </aside>
 
-                </div>
+<%
 
+}
 
-            <%
-                } else {
-            %>
+%>
 
+</section>
 
-                <!-- =================================================
-                     EMPTY CART
-                     ================================================= -->
 
-                <section class="empty-cart">
+<!-- =================================================
+     CART SUMMARY
+================================================= -->
 
-                    <h2>
-                        Your cart is empty
-                    </h2>
+<aside class="cart-summary">
 
-                    <p>
-                        You haven't added any products yet.
-                    </p>
+<h2>
 
-                    <a
-                        href="${pageContext.request.contextPath}/products"
-                        class="shop-button">
+Order Summary
 
-                        Start Shopping
+</h2>
 
-                    </a>
 
-                </section>
+<div class="summary-row">
 
+<span>
 
-            <%
-                }
-            %>
+Subtotal
 
-        </div>
+</span>
 
-    </main>
+<strong>
 
+₹<%= cartTotal %>
 
-    <jsp:include page="/WEB-INF/views/partials/footer.jsp" />
+</strong>
+
+</div>
+
+
+<div class="summary-row">
+
+<span>
+
+Delivery
+
+</span>
+
+<span>
+
+Calculated at checkout
+
+</span>
+
+</div>
+
+
+<div class="summary-total">
+
+<span>
+
+Total
+
+</span>
+
+<strong>
+
+₹<%= cartTotal %>
+
+</strong>
+
+</div>
+
+
+<a
+    href="${pageContext.request.contextPath}/checkout"
+    class="checkout-button">
+
+Proceed to Checkout
+
+</a>
+
+
+<a
+    href="${pageContext.request.contextPath}/products"
+    class="continue-shopping">
+
+← Continue Shopping
+
+</a>
+
+</aside>
+
+</div>
+
+
+<%
+
+} else {
+
+%>
+
+
+<!-- =================================================
+     EMPTY CART
+================================================= -->
+
+<section class="empty-cart">
+
+<h2>
+
+Your cart is empty
+
+</h2>
+
+<p>
+
+You haven't added any products yet.
+
+</p>
+
+<a
+    href="${pageContext.request.contextPath}/products"
+    class="shop-button">
+
+Start Shopping
+
+</a>
+
+</section>
+
+
+<%
+
+}
+
+%>
+
+</div>
+
+</main>
+
+
+<jsp:include page="/WEB-INF/views/partials/footer.jsp" />
 
 </body>
 

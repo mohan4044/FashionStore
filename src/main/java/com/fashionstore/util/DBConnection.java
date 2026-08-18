@@ -6,9 +6,36 @@ import java.sql.SQLException;
 
 public class DBConnection {
 
-    private static final String URL = "jdbc:mysql://localhost:3306/fashion_store";
-    private static final String USERNAME = "root";
-    private static final String PASSWORD = "132025";
+    private static final String HOST =
+            System.getenv("MYSQLHOST") != null
+                    ? System.getenv("MYSQLHOST")
+                    : "localhost";
+
+    private static final String PORT =
+            System.getenv("MYSQLPORT") != null
+                    ? System.getenv("MYSQLPORT")
+                    : "3306";
+
+    private static final String DATABASE =
+            System.getenv("MYSQLDATABASE") != null
+                    ? System.getenv("MYSQLDATABASE")
+                    : "fashion_store";
+
+    private static final String USERNAME =
+            System.getenv("MYSQLUSER") != null
+                    ? System.getenv("MYSQLUSER")
+                    : "root";
+
+    private static final String PASSWORD =
+            System.getenv("MYSQLPASSWORD") != null
+                    ? System.getenv("MYSQLPASSWORD")
+                    : "132025";
+
+    private static final String URL =
+            "jdbc:mysql://" + HOST + ":" + PORT + "/" + DATABASE
+                    + "?useSSL=false"
+                    + "&allowPublicKeyRetrieval=true"
+                    + "&serverTimezone=UTC";
 
     static {
         try {
@@ -19,6 +46,10 @@ public class DBConnection {
     }
 
     public static Connection getConnection() throws SQLException {
-        return DriverManager.getConnection(URL, USERNAME, PASSWORD);
+        return DriverManager.getConnection(
+                URL,
+                USERNAME,
+                PASSWORD
+        );
     }
 }

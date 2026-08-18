@@ -8,98 +8,234 @@
 
 <head>
 
-    <meta charset="UTF-8">
+<meta charset="UTF-8">
 
-    <title>Order Successful | Fashion Store</title>
+<title>Order Successful | Fashion Store</title>
 
-    <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/style.css">
+<link rel="stylesheet"
+      href="${pageContext.request.contextPath}/assets/css/style.css">
 
-    <style>
+<style>
 
-        .success-page {
-            max-width: 800px;
-            margin: 80px auto;
-            padding: 0 30px;
-            text-align: center;
-        }
+.success-page {
 
-        .success-box {
-            border: 1px solid #ddd;
-            padding: 50px 40px;
-            background: #fff;
-        }
+    max-width: 900px;
 
-        .success-icon {
-            font-size: 60px;
-            margin-bottom: 20px;
-        }
+    margin: 70px auto;
 
-        .success-title {
-            font-size: 36px;
-            color: #182f3d;
-            margin-bottom: 15px;
-        }
+    padding: 0 25px;
 
-        .success-message {
-            color: #666;
-            font-size: 17px;
-            margin-bottom: 30px;
-        }
+}
 
-        .order-details {
-            border-top: 1px solid #ddd;
-            border-bottom: 1px solid #ddd;
-            padding: 25px 0;
-            margin-bottom: 30px;
-        }
+.success-box {
 
-        .order-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 10px 0;
-        }
+    background: #ffffff;
 
-        .order-label {
-            color: #777;
-        }
+    border: 1px solid #e1e5e8;
 
-        .order-value {
-            font-weight: 600;
-            color: #333;
-        }
+    padding: 50px;
 
-        .success-buttons {
-            display: flex;
-            justify-content: center;
-            gap: 15px;
-            flex-wrap: wrap;
-        }
+    text-align: center;
 
-        .success-button {
-            display: inline-block;
-            padding: 14px 28px;
-            background: #182f3d;
-            color: white;
-            text-decoration: none;
-            border: none;
-        }
+}
 
-        .success-button:hover {
-            background: #294b5d;
-        }
+.success-icon {
 
-        .secondary-button {
-            background: white;
-            color: #182f3d;
-            border: 1px solid #182f3d;
-        }
+    width: 70px;
 
-        .secondary-button:hover {
-            background: #f5f5f5;
-        }
+    height: 70px;
 
-    </style>
+    margin: 0 auto 25px;
+
+    border-radius: 50%;
+
+    background: #182f3d;
+
+    color: #ffffff;
+
+    display: flex;
+
+    align-items: center;
+
+    justify-content: center;
+
+    font-size: 38px;
+
+    font-weight: bold;
+
+}
+
+.success-title {
+
+    margin: 0 0 15px;
+
+    color: #182f3d;
+
+    font-size: 36px;
+
+}
+
+.success-message {
+
+    color: #666;
+
+    font-size: 16px;
+
+    margin-bottom: 35px;
+
+}
+
+.order-details {
+
+    max-width: 600px;
+
+    margin: 0 auto 35px;
+
+    border-top: 1px solid #ddd;
+
+    border-bottom: 1px solid #ddd;
+
+    padding: 20px 0;
+
+}
+
+.order-row {
+
+    display: flex;
+
+    justify-content: space-between;
+
+    align-items: center;
+
+    padding: 13px 5px;
+
+    border-bottom: 1px solid #eeeeee;
+
+}
+
+.order-row:last-child {
+
+    border-bottom: none;
+
+}
+
+.order-label {
+
+    color: #777;
+
+    font-size: 15px;
+
+}
+
+.order-value {
+
+    color: #182f3d;
+
+    font-weight: 600;
+
+    font-size: 15px;
+
+}
+
+.success-buttons {
+
+    display: flex;
+
+    justify-content: center;
+
+    gap: 15px;
+
+    flex-wrap: wrap;
+
+}
+
+.success-button {
+
+    display: inline-block;
+
+    padding: 14px 28px;
+
+    background: #182f3d;
+
+    color: #ffffff;
+
+    text-decoration: none;
+
+    font-size: 15px;
+
+    font-weight: 600;
+
+    border: 1px solid #182f3d;
+
+}
+
+.success-button:hover {
+
+    background: #294b5d;
+
+}
+
+.secondary-button {
+
+    background: #ffffff;
+
+    color: #182f3d;
+
+}
+
+.secondary-button:hover {
+
+    background: #f5f5f5;
+
+}
+
+.checkout-warning {
+
+    margin: 20px auto;
+
+    padding: 12px 15px;
+
+    max-width: 600px;
+
+    background: #fff3f3;
+
+    border: 1px solid #e5bcbc;
+
+    color: #a33;
+
+}
+
+@media (max-width: 600px) {
+
+    .success-page {
+
+        margin: 40px auto;
+
+        padding: 0 15px;
+
+    }
+
+    .success-box {
+
+        padding: 35px 20px;
+
+    }
+
+    .success-title {
+
+        font-size: 28px;
+
+    }
+
+    .order-row {
+
+        gap: 20px;
+
+    }
+
+}
+
+</style>
 
 </head>
 
@@ -130,11 +266,8 @@ String checkoutWarning =
         </h1>
 
         <p class="success-message">
-
             Thank you for shopping with Fashion Store.
-
             Your order has been placed successfully.
-
         </p>
 
         <% if (order != null) { %>
@@ -203,13 +336,19 @@ String checkoutWarning =
 
         </div>
 
+        <% } else { %>
+
+        <div class="checkout-warning">
+            Order was created, but order details could not be loaded.
+        </div>
+
         <% } %>
 
         <% if (checkoutWarning != null) { %>
 
-        <p style="color:#a33;">
+        <div class="checkout-warning">
             <%= checkoutWarning %>
-        </p>
+        </div>
 
         <% } %>
 
@@ -217,16 +356,12 @@ String checkoutWarning =
 
             <a class="success-button"
                href="<%= request.getContextPath() %>/products">
-
                 Continue Shopping
-
             </a>
 
             <a class="success-button secondary-button"
                href="<%= request.getContextPath() %>/">
-
                 Back to Home
-
             </a>
 
         </div>

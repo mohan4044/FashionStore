@@ -81,8 +81,46 @@
 }
 
 .size-option {
+    position: relative;
+}
+
+.size-option input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+}
+
+.size-option label {
+    display: inline-block;
+    min-width: 55px;
     padding: 10px 18px;
     border: 1px solid #ccc;
+    text-align: center;
+    cursor: pointer;
+    background: white;
+    transition: 0.2s;
+}
+
+.size-option label:hover {
+    border-color: #182f3d;
+}
+
+.size-option input:checked + label {
+    background: #182f3d;
+    color: white;
+    border-color: #182f3d;
+}
+
+.quantity-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.quantity-input {
+    width: 70px;
+    padding: 10px;
+    border: 1px solid #ccc;
+    margin-bottom: 25px;
 }
 
 .add-cart-button {
@@ -91,8 +129,24 @@
     background: #182f3d;
     color: white;
     border: none;
-    text-decoration: none;
     cursor: pointer;
+    font-size: 16px;
+}
+
+.add-cart-button:hover {
+    background: #24485c;
+}
+
+.no-size-message {
+    color: #777;
+    margin-bottom: 20px;
+}
+
+.description {
+    color: #555;
+    font-size: 16px;
+    line-height: 1.7;
+    margin-bottom: 30px;
 }
 
 @media (max-width: 750px) {
@@ -108,6 +162,7 @@
     .product-details-page {
         padding: 0 15px;
     }
+
 }
 
 </style>
@@ -125,39 +180,82 @@ Product product =
 
 List<ProductSize> availableSizes =
     (List<ProductSize>)
-        request.getAttribute("availableSizes");
+    request.getAttribute("availableSizes");
 
 %>
 
 <main class="product-details-page">
 
-    <div class="product-details">
+<div class="product-details">
 
-        <div class="product-details-image">
+    <!-- ================================
+         PRODUCT IMAGE
+         ================================ -->
 
-            <img
-                src="<%= request.getContextPath() %>/assets/images/<%= product.getImageUrl() %>"
-                alt="<%= product.getProductName() %>">
+    <div class="product-details-image">
 
+        <img
+            src="<%= request.getContextPath() %>/assets/images/<%= product.getImageUrl() %>"
+            alt="<%= product.getProductName() %>">
+
+    </div>
+
+
+    <!-- ================================
+         PRODUCT INFORMATION
+         ================================ -->
+
+    <div class="product-details-info">
+
+        <h1>
+            <%= product.getProductName() %>
+        </h1>
+
+        <div class="brand">
+            <%= product.getBrand() %>
         </div>
 
-        <div class="product-details-info">
+        <div class="price">
+            ₹<%= product.getBasePrice() %>
+        </div>
+        <div class="description">
+    	<%= product.getDescription() %>
+		</div>
 
-            <h1>
-                <%= product.getProductName() %>
-            </h1>
 
-            <div class="brand">
-                <%= product.getBrand() %>
-            </div>
+        <!-- ================================
+             ADD TO CART FORM
+             ================================ -->
 
-            <div class="price">
-                ₹<%= product.getBasePrice() %>
-            </div>
+        <form
+            method="post"
+            action="<%= request.getContextPath() %>/cart-item">
+
+
+            <!-- Product ID -->
+
+            <input
+                type="hidden"
+                name="productId"
+                value="<%= product.getProductId() %>">
+
+
+            <!-- Unit Price -->
+
+            <input
+                type="hidden"
+                name="unitPrice"
+                value="<%= product.getBasePrice() %>">
+
+
+            <!-- ================================
+                 SIZE
+                 ================================ -->
 
             <div class="size-title">
                 Available Sizes
             </div>
+
 
             <div class="size-options">
 
@@ -166,13 +264,29 @@ List<ProductSize> availableSizes =
                 if (availableSizes != null &&
                     !availableSizes.isEmpty()) {
 
-                    for (ProductSize size :
-                         availableSizes) {
+                    int sizeIndex = 0;
+
+                    for (ProductSize size : availableSizes) {
+
+                        sizeIndex++;
 
                 %>
 
                     <div class="size-option">
-                        <%= size.getSizeLabel() %>
+
+                        <input
+                            type="radio"
+                            id="size<%= sizeIndex %>"
+                            name="sizeLabel"
+                            value="<%= size.getSizeLabel() %>"
+                            required>
+
+                        <label for="size<%= sizeIndex %>">
+
+                            <%= size.getSizeLabel() %>
+
+                        </label>
+
                     </div>
 
                 <%
@@ -183,8 +297,10 @@ List<ProductSize> availableSizes =
 
                 %>
 
-                    <div>
+                    <div class="no-size-message">
+
                         No sizes currently available.
+
                     </div>
 
                 <%
@@ -195,17 +311,57 @@ List<ProductSize> availableSizes =
 
             </div>
 
-            <a
-                class="add-cart-button"
-                href="<%= request.getContextPath() %>/cart">
 
-                Add to Cart
+            <!-- ================================
+                 QUANTITY
+                 ================================ -->
 
-            </a>
+            <div class="quantity-title">
 
-        </div>
+                Quantity
+
+            </div>
+
+            <input
+                class="quantity-input"
+                type="number"
+                name="quantity"
+                value="1"
+                min="1"
+                max="10"
+                required>
+
+
+            <!-- ================================
+                 ADD TO CART
+                 ================================ -->
+
+            <%
+
+            if (availableSizes != null &&
+                !availableSizes.isEmpty()) {
+
+            %>
+
+                <button
+                    type="submit"
+                    class="add-cart-button">
+
+                    Add to Cart
+
+                </button>
+
+            <%
+
+            }
+
+            %>
+
+        </form>
 
     </div>
+
+</div>
 
 </main>
 

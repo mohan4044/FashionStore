@@ -1,6 +1,6 @@
 <%@ page language="java"
-    contentType="text/html; charset=UTF-8"
-    pageEncoding="UTF-8"%>
+         contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8"%>
 
 <%@ page import="java.util.List" %>
 <%@ page import="com.fashionstore.model.Product" %>
@@ -11,193 +11,280 @@
 
 <head>
 
-<meta charset="UTF-8">
+    <meta charset="UTF-8">
 
-<meta name="viewport"
-      content="width=device-width, initial-scale=1.0">
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
 
-<title>Products | Fashion Store</title>
+    <title>Products | Fashion Store</title>
 
-<link rel="stylesheet"
-      href="${pageContext.request.contextPath}/assets/css/style.css">
+    <link rel="stylesheet"
+          href="${pageContext.request.contextPath}/assets/css/style.css">
 
-<style>
+    <style>
 
-.products-page {
-    max-width: 1200px;
-    margin: 50px auto;
-    padding: 0 30px;
-}
+        .products-page {
+            max-width: 1200px;
+            margin: 50px auto;
+            padding: 0 30px;
+        }
 
-.products-title {
-    font-size: 38px;
-    color: #182f3d;
-    margin-bottom: 10px;
-}
+        .products-title {
+            font-size: 38px;
+            color: #182f3d;
+            margin-bottom: 10px;
+        }
 
-.products-subtitle {
-    color: #777;
-    margin-bottom: 35px;
-}
+        .products-subtitle {
+            color: #777;
+            margin-bottom: 35px;
+        }
 
-.product-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 25px;
-}
+        .product-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 25px;
+        }
 
-.product-card {
-    display: block;
-    color: inherit;
-    text-decoration: none;
-    background: white;
-    border: 1px solid #eee;
-    padding-bottom: 20px;
-    transition: transform 0.2s ease;
-}
+        .product-card {
+            display: block;
+            color: inherit;
+            text-decoration: none;
+            background: white;
+            border: 1px solid #eee;
+            padding-bottom: 20px;
+            transition: transform 0.2s ease;
+        }
 
-.product-card:hover {
-    transform: translateY(-4px);
-}
+        .product-card:hover {
+            transform: translateY(-4px);
+        }
 
-.product-image {
-    width: 100%;
-    height: 300px;
-    overflow: hidden;
-    background: #f5f5f5;
-}
+        .product-image {
+            width: 100%;
+            height: 300px;
+            overflow: hidden;
+            background: #f5f5f5;
+        }
 
-.product-image img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    display: block;
-}
+        .product-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: block;
+        }
 
-.product-info {
-    padding: 15px;
-}
+        .product-info {
+            padding: 15px;
+        }
 
-.product-name {
-    font-size: 18px;
-    font-weight: 600;
-    color: #182f3d;
-    margin-bottom: 7px;
-}
+        .product-name {
+            font-size: 18px;
+            font-weight: 600;
+            color: #182f3d;
+            margin-bottom: 7px;
+        }
 
-.product-brand {
-    color: #777;
-    margin-bottom: 10px;
-}
+        .product-brand {
+            color: #777;
+            margin-bottom: 10px;
+        }
 
-.product-price {
-    font-weight: bold;
-    color: #182f3d;
-}
+        .product-price {
+            font-weight: bold;
+            color: #182f3d;
+        }
 
-.empty-message {
-    padding: 40px;
-    text-align: center;
-    color: #777;
-}
+        .empty-message {
+            padding: 40px;
+            text-align: center;
+            color: #777;
+        }
 
-@media (max-width: 900px) {
+        @media (max-width: 900px) {
 
-    .product-grid {
-        grid-template-columns: repeat(2, 1fr);
-    }
-}
+            .product-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
 
-@media (max-width: 550px) {
+        }
 
-    .product-grid {
-        grid-template-columns: 1fr;
-    }
+        @media (max-width: 550px) {
 
-    .products-page {
-        padding: 0 15px;
-    }
-}
+            .product-grid {
+                grid-template-columns: 1fr;
+            }
 
-</style>
+            .products-page {
+                padding: 0 15px;
+            }
+
+        }
+
+    </style>
 
 </head>
 
 <body>
 
-<jsp:include page="/WEB-INF/views/partials/navbar.jsp" />
+    <jsp:include page="/WEB-INF/views/partials/navbar.jsp" />
 
-<main class="products-page">
 
-    <h1 class="products-title">
-        Products
-    </h1>
+    <main class="products-page">
 
-    <p class="products-subtitle">
-        Discover fashion for every style and occasion.
-    </p>
+        <h1 class="products-title">
+            Products
+        </h1>
 
-    <%
+        <p class="products-subtitle">
+            Discover fashion for every style and occasion.
+        </p>
 
-    List<Product> products =
-        (List<Product>) request.getAttribute("products");
 
-    if (products == null || products.isEmpty()) {
+        <%
 
-    %>
+            List<Product> products =
+                    (List<Product>) request.getAttribute("products");
 
-        <div class="empty-message">
-            No products available.
-        </div>
 
-    <%
+            if (products == null || products.isEmpty()) {
 
-    } else {
+        %>
 
-        for (Product product : products) {
 
-    %>
+            <div class="empty-message">
 
-        <a class="product-card"
-           href="<%= request.getContextPath() %>/product?id=<%= product.getProductId() %>">
-
-            <div class="product-image">
-
-                <img
-                    src="<%= request.getContextPath() %>/assets/images/<%= product.getImageUrl() %>"
-                    alt="<%= product.getProductName() %>">
+                No products available.
 
             </div>
 
-            <div class="product-info">
 
-                <div class="product-name">
-                    <%= product.getProductName() %>
-                </div>
+        <%
 
-                <div class="product-brand">
-                    <%= product.getBrand() %>
-                </div>
+            } else {
 
-                <div class="product-price">
-                    ₹<%= product.getBasePrice() %>
-                </div>
+        %>
+
+
+            <div class="product-grid">
+
+
+                <%
+
+                    for (Product product : products) {
+
+                %>
+
+
+                    <a class="product-card"
+                       href="<%= request.getContextPath() %>/product?id=<%= product.getProductId() %>">
+
+
+                        <div class="product-image">
+
+
+                            <%
+
+                                String imageUrl =
+                                        product.getImageUrl();
+
+                                if (imageUrl != null &&
+                                    !imageUrl.trim().isEmpty()) {
+
+                                    imageUrl =
+                                            imageUrl.trim();
+
+                            %>
+
+
+                                <img
+                                    src="<%= request.getContextPath() %>/assets/images/<%= imageUrl %>"
+                                    alt="<%= product.getProductName() %>"
+                                    loading="lazy">
+
+
+                            <%
+
+                                } else {
+
+                            %>
+
+
+                                <div style="
+                                    width:100%;
+                                    height:100%;
+                                    display:flex;
+                                    align-items:center;
+                                    justify-content:center;
+                                    color:#777;
+                                ">
+
+                                    No Image
+
+                                </div>
+
+
+                            <%
+
+                                }
+
+                            %>
+
+
+                        </div>
+
+
+                        <div class="product-info">
+
+
+                            <div class="product-name">
+
+                                <%= product.getProductName() %>
+
+                            </div>
+
+
+                            <div class="product-brand">
+
+                                <%= product.getBrand() %>
+
+                            </div>
+
+
+                            <div class="product-price">
+
+                                ₹<%= product.getBasePrice() %>
+
+                            </div>
+
+
+                        </div>
+
+
+                    </a>
+
+
+                <%
+
+                    }
+
+                %>
+
 
             </div>
 
-        </a>
 
-    <%
+        <%
 
-        }
+            }
 
-    }
+        %>
 
-    %>
 
-</main>
+    </main>
 
-<jsp:include page="/WEB-INF/views/partials/footer.jsp" />
+
+    <jsp:include page="/WEB-INF/views/partials/footer.jsp" />
 
 </body>
 

@@ -6,15 +6,19 @@
 <%@ page import="com.fashionstore.model.CartItem" %>
 
 <!DOCTYPE html>
-<html>
+<html lang="en">
+
 <head>
 
     <meta charset="UTF-8">
 
+    <meta name="viewport"
+          content="width=device-width, initial-scale=1.0">
+
     <title>Checkout | Fashion Store</title>
 
     <link rel="stylesheet"
-          href="${pageContext.request.contextPath}/style.css">
+          href="${pageContext.request.contextPath}/assets/css/style.css">
 
     <style>
 
@@ -87,6 +91,7 @@
 
         .payment-option label {
             cursor: pointer;
+            display: block;
         }
 
         .payment-option input {
@@ -122,6 +127,7 @@
             display: flex;
             justify-content: space-between;
             padding: 12px 0;
+            gap: 20px;
         }
 
         .summary-total {
@@ -154,6 +160,7 @@
             background: #f8eaea;
             color: #a33;
             margin-bottom: 25px;
+            border: 1px solid #e0bcbc;
         }
 
         .empty-checkout {
@@ -170,6 +177,10 @@
             text-decoration: none;
         }
 
+        .empty-checkout a:hover {
+            background: #294b5d;
+        }
+
         @media (max-width: 800px) {
 
             .checkout-layout {
@@ -179,6 +190,11 @@
             .checkout-page {
                 padding: 0 15px;
             }
+
+            .checkout-section {
+                padding: 20px;
+            }
+
         }
 
     </style>
@@ -187,296 +203,310 @@
 
 <body>
 
-<jsp:include page="partials/navbar.jsp"/>
+    <jsp:include page="partials/navbar.jsp"/>
 
-<%
-    String checkoutError =
-            (String) request.getAttribute("checkoutError");
+    <%
 
-    Cart cart =
-            (Cart) request.getAttribute("cart");
+        String checkoutError =
+                (String) request.getAttribute("checkoutError");
 
-    List<CartItem> cartItems =
-            (List<CartItem>) request.getAttribute("cartItems");
+        Cart cart =
+                (Cart) request.getAttribute("cart");
 
-    BigDecimal subtotal = BigDecimal.ZERO;
+        List<CartItem> cartItems =
+                (List<CartItem>) request.getAttribute("cartItems");
 
-    if (cartItems != null) {
+        BigDecimal subtotal =
+                BigDecimal.ZERO;
 
-        for (CartItem item : cartItems) {
+        if (cartItems != null) {
 
-            if (item.getUnitPrice() != null) {
+            for (CartItem item : cartItems) {
 
-                BigDecimal itemTotal =
-                        item.getUnitPrice()
-                            .multiply(
-                                BigDecimal.valueOf(
-                                    item.getQuantity()
-                                )
-                            );
+                if (item.getUnitPrice() != null) {
 
-                subtotal = subtotal.add(itemTotal);
+                    BigDecimal itemTotal =
+                            item.getUnitPrice()
+                                .multiply(
+                                    BigDecimal.valueOf(
+                                        item.getQuantity()
+                                    )
+                                );
+
+                    subtotal =
+                            subtotal.add(itemTotal);
+                }
             }
         }
-    }
-%>
 
+    %>
 
-<div class="checkout-page">
+    <main class="checkout-page">
 
-    <h1 class="checkout-title">
-        Checkout
-    </h1>
+        <h1 class="checkout-title">
+            Checkout
+        </h1>
 
-    <p class="checkout-subtitle">
-        Complete your order details.
-    </p>
+        <p class="checkout-subtitle">
+            Complete your order details.
+        </p>
 
+        <%
 
-    <% if (checkoutError != null) { %>
+            if (checkoutError != null &&
+                !checkoutError.trim().isEmpty()) {
 
-        <div class="checkout-error">
-            <%= checkoutError %>
-        </div>
+        %>
 
-    <% } %>
+            <div class="checkout-error">
+                <%= checkoutError %>
+            </div>
 
+        <%
 
-    <% if (cartItems == null || cartItems.isEmpty()) { %>
+            }
 
-        <div class="checkout-section empty-checkout">
+        %>
 
-            <h2>Your cart is empty</h2>
+        <%
 
-            <p>
-                Add some products to your cart before checking out.
-            </p>
+            if (cartItems == null ||
+                cartItems.isEmpty()) {
 
-            <a href="<%= request.getContextPath() %>/products">
-                Continue Shopping
-            </a>
+        %>
 
-        </div>
+            <div class="checkout-section empty-checkout">
 
-    <% } else { %>
+                <h2>
+                    Your cart is empty
+                </h2>
 
+                <p>
+                    Add some products to your cart before checking out.
+                </p>
 
-        <div class="checkout-layout">
+                <a href="<%= request.getContextPath() %>/products">
+                    Continue Shopping
+                </a>
 
+            </div>
 
-            <!-- ========================= -->
-            <!-- DELIVERY INFORMATION -->
-            <!-- ========================= -->
+        <%
 
-            <div class="checkout-section">
+            } else {
 
-                <h2>Delivery Information</h2>
+        %>
 
-                <form method="post"
-                      action="<%= request.getContextPath() %>/checkout">
+            <div class="checkout-layout">
 
+                <!-- ========================= -->
+                <!-- DELIVERY INFORMATION -->
+                <!-- ========================= -->
 
-                    <div class="form-group">
+                <div class="checkout-section">
 
-                        <label for="deliveryAddress">
-                            Delivery Address
-                        </label>
+                    <h2>
+                        Delivery Information
+                    </h2>
 
-                        <textarea
+                    <form method="post"
+                          action="<%= request.getContextPath() %>/checkout">
+
+                        <div class="form-group">
+
+                            <label for="deliveryAddress">
+                                Delivery Address
+                            </label>
+
+                            <textarea
                                 id="deliveryAddress"
                                 name="deliveryAddress"
                                 placeholder="Enter your complete delivery address"
                                 required></textarea>
 
-                    </div>
+                        </div>
 
+                        <h2>
+                            Payment Method
+                        </h2>
 
-                    <h2>Payment Method</h2>
+                        <div class="payment-option">
 
+                            <label>
 
-                    <div class="payment-option">
-
-                        <label>
-
-                            <input
+                                <input
                                     type="radio"
                                     name="paymentMethod"
                                     value="COD"
                                     required>
 
-                            Cash on Delivery
+                                Cash on Delivery
 
-                        </label>
+                            </label>
 
-                    </div>
+                        </div>
 
+                        <div class="payment-option">
 
-                    <div class="payment-option">
+                            <label>
 
-                        <label>
-
-                            <input
+                                <input
                                     type="radio"
                                     name="paymentMethod"
                                     value="UPI">
 
-                            UPI
+                                UPI
 
-                        </label>
+                            </label>
 
-                    </div>
+                        </div>
 
+                        <div class="payment-option">
 
-                    <div class="payment-option">
+                            <label>
 
-                        <label>
-
-                            <input
+                                <input
                                     type="radio"
                                     name="paymentMethod"
                                     value="CARD">
 
-                            Card
+                                Card
 
-                        </label>
+                            </label>
 
-                    </div>
+                        </div>
 
-
-                    <button
+                        <button
                             type="submit"
                             class="place-order-button">
 
-                        Place Order
+                            Place Order
 
-                    </button>
+                        </button>
 
+                    </form>
 
-                </form>
-
-            </div>
-
+                </div>
 
 
-            <!-- ========================= -->
-            <!-- ORDER SUMMARY -->
-            <!-- ========================= -->
+                <!-- ========================= -->
+                <!-- ORDER SUMMARY -->
+                <!-- ========================= -->
 
-            <div class="checkout-section">
+                <div class="checkout-section">
 
-                <h2>Order Summary</h2>
+                    <h2>
+                        Order Summary
+                    </h2>
 
+                    <%
 
-                <%
-                    for (CartItem item : cartItems) {
+                        for (CartItem item : cartItems) {
 
-                        BigDecimal itemTotal = BigDecimal.ZERO;
+                            BigDecimal itemTotal =
+                                    BigDecimal.ZERO;
 
-                        if (item.getUnitPrice() != null) {
+                            if (item.getUnitPrice() != null) {
 
-                            itemTotal =
-                                    item.getUnitPrice()
-                                        .multiply(
-                                            BigDecimal.valueOf(
-                                                item.getQuantity()
-                                            )
-                                        );
+                                itemTotal =
+                                        item.getUnitPrice()
+                                            .multiply(
+                                                BigDecimal.valueOf(
+                                                    item.getQuantity()
+                                                )
+                                            );
+                            }
+
+                    %>
+
+                        <div class="order-item">
+
+                            <div>
+
+                                <div class="order-item-name">
+
+                                    Product #<%= item.getProductId() %>
+
+                                </div>
+
+                                <div class="order-item-details">
+
+                                    Size:
+                                    <%= item.getSizeLabel() %>
+
+                                    <br>
+
+                                    Quantity:
+                                    <%= item.getQuantity() %>
+
+                                </div>
+
+                            </div>
+
+                            <div class="order-item-price">
+
+                                ₹<%= itemTotal %>
+
+                            </div>
+
+                        </div>
+
+                    <%
+
                         }
-                %>
 
+                    %>
 
-                    <div class="order-item">
+                    <div class="summary-row">
 
-                        <div>
+                        <span>
+                            Subtotal
+                        </span>
 
-                            <div class="order-item-name">
-
-                                Product #<%= item.getProductId() %>
-
-                            </div>
-
-
-                            <div class="order-item-details">
-
-                                Size:
-                                <%= item.getSizeLabel() %>
-
-                                <br>
-
-                                Quantity:
-                                <%= item.getQuantity() %>
-
-                            </div>
-
-                        </div>
-
-
-                        <div class="order-item-price">
-
-                            ₹<%= itemTotal %>
-
-                        </div>
+                        <span>
+                            ₹<%= subtotal %>
+                        </span>
 
                     </div>
 
+                    <div class="summary-row">
 
-                <%
-                    }
-                %>
+                        <span>
+                            Delivery
+                        </span>
 
+                        <span>
+                            Free
+                        </span>
 
-                <div class="summary-row">
+                    </div>
 
-                    <span>
-                        Subtotal
-                    </span>
+                    <div class="summary-row summary-total">
 
-                    <span>
-                        ₹<%= subtotal %>
-                    </span>
+                        <span>
+                            Total
+                        </span>
 
-                </div>
+                        <span>
+                            ₹<%= subtotal %>
+                        </span>
 
-
-                <div class="summary-row">
-
-                    <span>
-                        Delivery
-                    </span>
-
-                    <span>
-                        Calculated at checkout
-                    </span>
+                    </div>
 
                 </div>
-
-
-                <div class="summary-row summary-total">
-
-                    <span>
-                        Total
-                    </span>
-
-                    <span>
-                        ₹<%= subtotal %>
-                    </span>
-
-                </div>
-
 
             </div>
 
+        <%
 
-        </div>
+            }
 
+        %>
 
-    <% } %>
+    </main>
 
-</div>
-
-
-<jsp:include page="partials/footer.jsp"/>
-
+    <jsp:include page="partials/footer.jsp"/>
 
 </body>
+
 </html>

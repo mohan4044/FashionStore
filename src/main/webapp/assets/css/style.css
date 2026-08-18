@@ -452,4 +452,62 @@ button {
     .navbar-search {
         width: 100%;
     }
+    
+    /* =========================================================
+   ORDER SUCCESS PAGE - LAYOUT FIX
+========================================================= */
+
+html,
+body {
+    width: 100%;
+    max-width: 100%;
+    overflow-x: hidden;
+}
+
+.success-page {
+    width: 100%;
+    max-width: 900px;
+    margin: 70px auto !important;
+    padding: 0 25px;
+    text-align: center;
+}
+
+.success-box {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+    background: #ffffff;
+    border: 1px solid #e1e5e8;
+    padding: 50px;
+    text-align: center;
+}
+
+.order-details {
+    width: 100%;
+    max-width: 600px;
+    margin: 0 auto 35px;
+}
+
+.success-buttons {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 600px) {
+
+    .success-page {
+        width: 100%;
+        margin: 40px auto !important;
+        padding: 0 15px;
+    }
+
+    .success-box {
+        padding: 35px 20px;
+    }
+
+}
 }

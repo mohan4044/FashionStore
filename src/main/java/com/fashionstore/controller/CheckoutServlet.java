@@ -69,7 +69,8 @@ public class CheckoutServlet extends HttpServlet {
         if (session == null) {
 
             response.sendRedirect(
-                    request.getContextPath() + "/login");
+                    request.getContextPath() + "/login"
+            );
 
             return;
         }
@@ -80,7 +81,8 @@ public class CheckoutServlet extends HttpServlet {
         if (loggedInUser == null) {
 
             response.sendRedirect(
-                    request.getContextPath() + "/login");
+                    request.getContextPath() + "/login"
+            );
 
             return;
         }
@@ -156,13 +158,22 @@ public class CheckoutServlet extends HttpServlet {
             HttpServletResponse response)
             throws ServletException, IOException {
 
+        System.out.println(
+                "===== CHECKOUT POST STARTED ====="
+        );
+
         HttpSession session =
                 request.getSession(false);
 
         if (session == null) {
 
+            System.out.println(
+                    "CHECKOUT ERROR: SESSION IS NULL"
+            );
+
             response.sendRedirect(
-                    request.getContextPath() + "/login");
+                    request.getContextPath() + "/login"
+            );
 
             return;
         }
@@ -172,8 +183,13 @@ public class CheckoutServlet extends HttpServlet {
 
         if (loggedInUser == null) {
 
+            System.out.println(
+                    "CHECKOUT ERROR: USER IS NOT LOGGED IN"
+            );
+
             response.sendRedirect(
-                    request.getContextPath() + "/login");
+                    request.getContextPath() + "/login"
+            );
 
             return;
         }
@@ -181,14 +197,30 @@ public class CheckoutServlet extends HttpServlet {
         int userId =
                 loggedInUser.getUserId();
 
+        System.out.println(
+                "USER ID = " + userId
+        );
+
         String deliveryAddress =
                 request.getParameter("deliveryAddress");
 
         String paymentMethod =
                 request.getParameter("paymentMethod");
 
+        System.out.println(
+                "DELIVERY ADDRESS = " + deliveryAddress
+        );
+
+        System.out.println(
+                "PAYMENT METHOD = " + paymentMethod
+        );
+
         if (deliveryAddress == null ||
                 deliveryAddress.trim().isEmpty()) {
+
+            System.out.println(
+                    "CHECKOUT ERROR: DELIVERY ADDRESS EMPTY"
+            );
 
             showError(
                     request,
@@ -202,6 +234,10 @@ public class CheckoutServlet extends HttpServlet {
 
         if (paymentMethod == null ||
                 paymentMethod.trim().isEmpty()) {
+
+            System.out.println(
+                    "CHECKOUT ERROR: PAYMENT METHOD EMPTY"
+            );
 
             showError(
                     request,
@@ -217,6 +253,11 @@ public class CheckoutServlet extends HttpServlet {
                 !paymentMethod.equals("UPI") &&
                 !paymentMethod.equals("CARD")) {
 
+            System.out.println(
+                    "CHECKOUT ERROR: INVALID PAYMENT METHOD = "
+                            + paymentMethod
+            );
+
             showError(
                     request,
                     response,
@@ -227,10 +268,25 @@ public class CheckoutServlet extends HttpServlet {
             return;
         }
 
+        System.out.println(
+                "PAYMENT VALIDATION PASSED"
+        );
+
         Cart cart =
                 cartDAO.getCartByUserId(userId);
 
+        System.out.println(
+                "CART = " +
+                        (cart == null
+                                ? "NULL"
+                                : cart.getCartId())
+        );
+
         if (cart == null) {
+
+            System.out.println(
+                    "CHECKOUT ERROR: CART IS NULL"
+            );
 
             showError(
                     request,
@@ -247,8 +303,19 @@ public class CheckoutServlet extends HttpServlet {
                         cart.getCartId()
                 );
 
+        System.out.println(
+                "CART ITEMS = " +
+                        (cartItems == null
+                                ? "NULL"
+                                : cartItems.size())
+        );
+
         if (cartItems == null ||
                 cartItems.isEmpty()) {
+
+            System.out.println(
+                    "CHECKOUT ERROR: CART ITEMS EMPTY"
+            );
 
             showError(
                     request,
@@ -266,9 +333,46 @@ public class CheckoutServlet extends HttpServlet {
         List<CheckoutItemData> checkoutItems =
                 new ArrayList<>();
 
+        System.out.println(
+                "===== VALIDATING CART ITEMS ====="
+        );
+
         for (CartItem cartItem : cartItems) {
 
+            System.out.println(
+                    "--------------------------------"
+            );
+
+            System.out.println(
+                    "CART ITEM ID = "
+                            + cartItem.getCartItemId()
+            );
+
+            System.out.println(
+                    "PRODUCT ID = "
+                            + cartItem.getProductId()
+            );
+
+            System.out.println(
+                    "SIZE = "
+                            + cartItem.getSizeLabel()
+            );
+
+            System.out.println(
+                    "QUANTITY = "
+                            + cartItem.getQuantity()
+            );
+
+            System.out.println(
+                    "UNIT PRICE = "
+                            + cartItem.getUnitPrice()
+            );
+
             if (cartItem.getQuantity() <= 0) {
+
+                System.out.println(
+                        "CHECKOUT ERROR: INVALID QUANTITY"
+                );
 
                 showError(
                         request,
@@ -285,7 +389,18 @@ public class CheckoutServlet extends HttpServlet {
                             cartItem.getProductId()
                     );
 
+            System.out.println(
+                    "PRODUCT = " +
+                            (product == null
+                                    ? "NULL"
+                                    : product.getProductName())
+            );
+
             if (product == null) {
+
+                System.out.println(
+                        "CHECKOUT ERROR: PRODUCT NOT FOUND"
+                );
 
                 showError(
                         request,
@@ -297,7 +412,16 @@ public class CheckoutServlet extends HttpServlet {
                 return;
             }
 
+            System.out.println(
+                    "PRODUCT ACTIVE = "
+                            + product.isActive()
+            );
+
             if (!product.isActive()) {
+
+                System.out.println(
+                        "CHECKOUT ERROR: PRODUCT INACTIVE"
+                );
 
                 showError(
                         request,
@@ -316,7 +440,18 @@ public class CheckoutServlet extends HttpServlet {
                             cartItem.getSizeLabel()
                     );
 
+            System.out.println(
+                    "PRODUCT SIZE = " +
+                            (productSize == null
+                                    ? "NULL"
+                                    : productSize.getProductSizeId())
+            );
+
             if (productSize == null) {
+
+                System.out.println(
+                        "CHECKOUT ERROR: PRODUCT SIZE NOT FOUND"
+                );
 
                 showError(
                         request,
@@ -329,7 +464,16 @@ public class CheckoutServlet extends HttpServlet {
                 return;
             }
 
+            System.out.println(
+                    "SIZE AVAILABLE = "
+                            + productSize.isAvailable()
+            );
+
             if (!productSize.isAvailable()) {
+
+                System.out.println(
+                        "CHECKOUT ERROR: SIZE NOT AVAILABLE"
+                );
 
                 showError(
                         request,
@@ -342,8 +486,17 @@ public class CheckoutServlet extends HttpServlet {
                 return;
             }
 
+            System.out.println(
+                    "STOCK QUANTITY = "
+                            + productSize.getStockQuantity()
+            );
+
             if (productSize.getStockQuantity()
                     < cartItem.getQuantity()) {
+
+                System.out.println(
+                        "CHECKOUT ERROR: INSUFFICIENT STOCK"
+                );
 
                 showError(
                         request,
@@ -359,6 +512,10 @@ public class CheckoutServlet extends HttpServlet {
             }
 
             if (cartItem.getUnitPrice() == null) {
+
+                System.out.println(
+                        "CHECKOUT ERROR: UNIT PRICE NULL"
+                );
 
                 showError(
                         request,
@@ -381,6 +538,16 @@ public class CheckoutServlet extends HttpServlet {
             totalAmount =
                     totalAmount.add(itemSubtotal);
 
+            System.out.println(
+                    "ITEM SUBTOTAL = "
+                            + itemSubtotal
+            );
+
+            System.out.println(
+                    "RUNNING TOTAL = "
+                            + totalAmount
+            );
+
             checkoutItems.add(
                     new CheckoutItemData(
                             cartItem,
@@ -390,6 +557,18 @@ public class CheckoutServlet extends HttpServlet {
                     )
             );
         }
+
+        System.out.println(
+                "===== CART VALIDATION COMPLETE ====="
+        );
+
+        System.out.println(
+                "TOTAL AMOUNT = " + totalAmount
+        );
+
+        System.out.println(
+                "===== CREATING ORDER ====="
+        );
 
         Order order =
                 new Order();
@@ -416,11 +595,47 @@ public class CheckoutServlet extends HttpServlet {
                 deliveryAddress.trim()
         );
 
+        System.out.println(
+                "ORDER USER ID = "
+                        + order.getUserId()
+        );
+
+        System.out.println(
+                "ORDER TOTAL = "
+                        + order.getTotalAmount()
+        );
+
+        System.out.println(
+                "ORDER PAYMENT METHOD = "
+                        + order.getPaymentMethod()
+        );
+
+        System.out.println(
+                "ORDER PAYMENT STATUS = "
+                        + order.getPaymentStatus()
+        );
+
+        System.out.println(
+                "ORDER STATUS = "
+                        + order.getOrderStatus()
+        );
+
         boolean orderCreated =
                 orderDAO.createOrder(order);
 
+        System.out.println(
+                "ORDER CREATED = "
+                        + orderCreated
+                        + " | ORDER ID = "
+                        + order.getOrderId()
+        );
+
         if (!orderCreated ||
                 order.getOrderId() <= 0) {
+
+            System.out.println(
+                    "CHECKOUT ERROR: ORDER CREATION FAILED"
+            );
 
             showError(
                     request,
@@ -432,208 +647,308 @@ public class CheckoutServlet extends HttpServlet {
             return;
         }
 
+        System.out.println(
+                "===== CREATING ORDER ITEMS ====="
+        );
         for (CheckoutItemData itemData :
-                checkoutItems) {
+            checkoutItems) {
 
-            CartItem cartItem =
-                    itemData.getCartItem();
+        CartItem cartItem =
+                itemData.getCartItem();
 
-            Product product =
-                    itemData.getProduct();
+        Product product =
+                itemData.getProduct();
 
-            OrderItem orderItem =
-                    new OrderItem();
+        OrderItem orderItem =
+                new OrderItem();
 
-            orderItem.setOrderId(
+        orderItem.setOrderId(
+                order.getOrderId()
+        );
+
+        orderItem.setProductId(
+                product.getProductId()
+        );
+
+        orderItem.setProductName(
+                product.getProductName()
+        );
+
+        orderItem.setQuantity(
+                cartItem.getQuantity()
+        );
+
+        orderItem.setUnitPrice(
+                cartItem.getUnitPrice()
+        );
+
+        orderItem.setSubtotal(
+                itemData.getItemSubtotal()
+        );
+
+        orderItem.setSizeLabel(
+                cartItem.getSizeLabel()
+        );
+
+        System.out.println(
+                "ADDING ORDER ITEM: "
+                        + product.getProductName()
+        );
+
+        boolean itemCreated =
+                orderItemDAO.addOrderItem(
+                        orderItem
+                );
+
+        System.out.println(
+                "ORDER ITEM CREATED = "
+                        + itemCreated
+        );
+
+        if (!itemCreated) {
+
+            System.out.println(
+                    "CHECKOUT ERROR: ORDER ITEM CREATION FAILED"
+            );
+
+            orderDAO.cancelOrder(
                     order.getOrderId()
             );
 
-            orderItem.setProductId(
-                    product.getProductId()
+            showError(
+                    request,
+                    response,
+                    userId,
+                    "Unable to create your order items."
             );
-
-            orderItem.setProductName(
-                    product.getProductName()
-            );
-
-            orderItem.setQuantity(
-                    cartItem.getQuantity()
-            );
-
-            orderItem.setUnitPrice(
-                    cartItem.getUnitPrice()
-            );
-
-            orderItem.setSubtotal(
-                    itemData.getItemSubtotal()
-            );
-
-            orderItem.setSizeLabel(
-                    cartItem.getSizeLabel()
-            );
-
-            boolean itemCreated =
-                    orderItemDAO.addOrderItem(
-                            orderItem
-                    );
-
-            if (!itemCreated) {
-
-                orderDAO.cancelOrder(
-                        order.getOrderId()
-                );
-
-                showError(
-                        request,
-                        response,
-                        userId,
-                        "Unable to create your order items."
-                );
-
-                return;
-            }
-        }
-
-        for (CheckoutItemData itemData :
-                checkoutItems) {
-
-            ProductSize productSize =
-                    itemData.getProductSize();
-
-            CartItem cartItem =
-                    itemData.getCartItem();
-
-            boolean stockUpdated =
-                    productSizeDAO.decreaseStock(
-                            productSize.getProductSizeId(),
-                            cartItem.getQuantity()
-                    );
-
-            if (!stockUpdated) {
-
-                orderDAO.cancelOrder(
-                        order.getOrderId()
-                );
-
-                showError(
-                        request,
-                        response,
-                        userId,
-                        "Stock changed while placing your order. "
-                                + "Please try again."
-                );
-
-                return;
-            }
-        }
-
-        boolean cartCleared =
-                cartItemDAO.clearCart(
-                        cart.getCartId()
-                );
-
-        if (!cartCleared) {
-
-            request.setAttribute(
-                    "order",
-                    order
-            );
-
-            request.setAttribute(
-                    "checkoutWarning",
-                    "Your order was placed, but the cart could not be cleared."
-            );
-
-            request.getRequestDispatcher(
-                    "/WEB-INF/views/order-success.jsp"
-            ).forward(request, response);
 
             return;
         }
+    }
+
+    System.out.println(
+            "===== ORDER ITEMS CREATED ====="
+    );
+
+    System.out.println(
+            "===== DECREASING STOCK ====="
+    );
+
+    for (CheckoutItemData itemData :
+            checkoutItems) {
+
+        ProductSize productSize =
+                itemData.getProductSize();
+
+        CartItem cartItem =
+                itemData.getCartItem();
+
+        System.out.println(
+                "DECREASING STOCK"
+        );
+
+        System.out.println(
+                "PRODUCT SIZE ID = "
+                        + productSize.getProductSizeId()
+        );
+
+        System.out.println(
+                "QUANTITY = "
+                        + cartItem.getQuantity()
+        );
+
+        boolean stockUpdated =
+                productSizeDAO.decreaseStock(
+                        productSize.getProductSizeId(),
+                        cartItem.getQuantity()
+                );
+
+        System.out.println(
+                "STOCK UPDATED = "
+                        + stockUpdated
+        );
+
+        if (!stockUpdated) {
+
+            System.out.println(
+                    "CHECKOUT ERROR: STOCK UPDATE FAILED"
+            );
+
+            orderDAO.cancelOrder(
+                    order.getOrderId()
+            );
+
+            showError(
+                    request,
+                    response,
+                    userId,
+                    "Stock changed while placing your order. "
+                            + "Please try again."
+            );
+
+            return;
+        }
+    }
+
+    System.out.println(
+            "===== STOCK UPDATED SUCCESSFULLY ====="
+    );
+
+    System.out.println(
+            "===== CLEARING CART ====="
+    );
+
+    boolean cartCleared =
+            cartItemDAO.clearCart(
+                    cart.getCartId()
+            );
+
+    System.out.println(
+            "CART CLEARED = "
+                    + cartCleared
+    );
+
+    if (!cartCleared) {
+
+        System.out.println(
+                "WARNING: ORDER PLACED BUT CART NOT CLEARED"
+        );
 
         request.setAttribute(
                 "order",
                 order
         );
 
+        request.setAttribute(
+                "checkoutWarning",
+                "Your order was placed, but the cart could not be cleared."
+        );
+
         request.getRequestDispatcher(
                 "/WEB-INF/views/order-success.jsp"
         ).forward(request, response);
+
+        return;
     }
 
-    private void showError(
-            HttpServletRequest request,
-            HttpServletResponse response,
-            int userId,
-            String message)
-            throws ServletException, IOException {
+    System.out.println(
+            "===== CART CLEARED SUCCESSFULLY ====="
+    );
 
-        Cart cart =
-                cartDAO.getCartByUserId(userId);
+    System.out.println(
+            "===== CHECKOUT SUCCESS ====="
+    );
 
-        List<CartItem> cartItems = null;
+    System.out.println(
+            "ORDER ID = "
+                    + order.getOrderId()
+    );
 
-        if (cart != null) {
+    System.out.println(
+            "TOTAL AMOUNT = "
+                    + order.getTotalAmount()
+    );
 
-            cartItems =
-                    cartItemDAO.getCartItemsByCartId(
-                            cart.getCartId()
-                    );
-        }
+    request.setAttribute(
+            "order",
+            order
+    );
 
-        request.setAttribute(
-                "checkoutError",
-                message
-        );
+    request.getRequestDispatcher(
+            "/WEB-INF/views/order-success.jsp"
+    ).forward(request, response);
+}
 
-        request.setAttribute(
-                "cart",
-                cart
-        );
+private void showError(
+        HttpServletRequest request,
+        HttpServletResponse response,
+        int userId,
+        String message)
+        throws ServletException, IOException {
 
-        request.setAttribute(
-                "cartItems",
-                cartItems
-        );
+    System.out.println(
+            "SHOWING CHECKOUT ERROR: "
+                    + message
+    );
 
-        request.getRequestDispatcher(
-                "/WEB-INF/views/checkout.jsp"
-        ).forward(request, response);
+    Cart cart =
+            cartDAO.getCartByUserId(userId);
+
+    List<CartItem> cartItems =
+            null;
+
+    if (cart != null) {
+
+        cartItems =
+                cartItemDAO.getCartItemsByCartId(
+                        cart.getCartId()
+                );
     }
 
-    private static class CheckoutItemData {
+    request.setAttribute(
+            "checkoutError",
+            message
+    );
 
-        private final CartItem cartItem;
-        private final Product product;
-        private final ProductSize productSize;
-        private final BigDecimal itemSubtotal;
+    request.setAttribute(
+            "cart",
+            cart
+    );
 
-        public CheckoutItemData(
-                CartItem cartItem,
-                Product product,
-                ProductSize productSize,
-                BigDecimal itemSubtotal) {
+    request.setAttribute(
+            "cartItems",
+            cartItems
+    );
 
-            this.cartItem = cartItem;
-            this.product = product;
-            this.productSize = productSize;
-            this.itemSubtotal = itemSubtotal;
-        }
+    request.getRequestDispatcher(
+            "/WEB-INF/views/checkout.jsp"
+    ).forward(request, response);
+}
 
-        public CartItem getCartItem() {
-            return cartItem;
-        }
+private static class CheckoutItemData {
 
-        public Product getProduct() {
-            return product;
-        }
+    private final CartItem cartItem;
 
-        public ProductSize getProductSize() {
-            return productSize;
-        }
+    private final Product product;
 
-        public BigDecimal getItemSubtotal() {
-            return itemSubtotal;
-        }
+    private final ProductSize productSize;
+
+    private final BigDecimal itemSubtotal;
+
+    public CheckoutItemData(
+            CartItem cartItem,
+            Product product,
+            ProductSize productSize,
+            BigDecimal itemSubtotal) {
+
+        this.cartItem = cartItem;
+
+        this.product = product;
+
+        this.productSize = productSize;
+
+        this.itemSubtotal = itemSubtotal;
+    }
+
+    public CartItem getCartItem() {
+
+        return cartItem;
+    }
+
+    public Product getProduct() {
+
+        return product;
+    }
+
+    public ProductSize getProductSize() {
+
+        return productSize;
+    }
+
+    public BigDecimal getItemSubtotal() {
+
+        return itemSubtotal;
     }
 }
+}
+        
